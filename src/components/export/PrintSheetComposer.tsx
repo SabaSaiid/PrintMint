@@ -2,8 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { renderPrintSheetCanvas } from '../../lib/print/layoutSheet';
 import { generateSinglePhotoPdf, generatePrintSheetPdf, downloadBlob } from '../../lib/print/exportPdf';
+import { generateAuditCertificatePdf } from '../../lib/print/auditReportPdf';
+import { compressImageToTargetKB } from '../../lib/export/compressor';
 import { whitenBackground } from '../../lib/background/whiten';
-import { Download, Printer, FileText, CheckCircle2, RefreshCw, Grid, Scissors, Sparkles, Eye } from 'lucide-react';
+import { FamilyBatchModal } from './FamilyBatchModal';
+import { Download, Printer, FileText, CheckCircle2, RefreshCw, Grid, Scissors, Sparkles, Users, Award, ShieldCheck, Gauge } from 'lucide-react';
 import { PrintSheetPreset, PaperFormat } from '../../types';
 
 export const PrintSheetComposer: React.FC = () => {
@@ -15,8 +18,8 @@ export const PrintSheetComposer: React.FC = () => {
     bgOption,
     bgHexOverride,
     setStep,
-    printSheetPreset,
-    setPrintSheetPreset,
+    qualityAnalysis,
+    complianceChecks,
   } = useEditorStore();
 
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -25,8 +28,11 @@ export const PrintSheetComposer: React.FC = () => {
   const [activePaperFormat, setActivePaperFormat] = useState<PaperFormat>('4x6');
   const [showCutMarks, setShowCutMarks] = useState(true);
   const [showPhotoBorder, setShowPhotoBorder] = useState(true);
+  const [targetKBLimit, setTargetKBLimit] = useState<number>(240);
+  const [compressedKBResult, setCompressedKBResult] = useState<number | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [copiedNotification, setCopiedNotification] = useState<string | null>(null);
+  const [isFamilyModalOpen, setIsFamilyModalOpen] = useState(false);
 
   // Available Print Sheet Configurations by paper format
   const SHEET_PRESETS_MAP: Record<PaperFormat, PrintSheetPreset> = {
@@ -157,6 +163,20 @@ export const PrintSheetComposer: React.FC = () => {
     }, 'image/jpeg', 0.95);
   };
 
+  const handleDownloadCompressedJpg = async () => {
+    if (!croppedCanvasRef.current) return;
+    setIsExporting(true);
+    try {
+      const result = await compressImageToTargetKB(croppedCanvasRef.current, targetKBLimit);
+      setCompressedKBResult(result.actualKB);
+      downloadBlob(result.blob, `printmint-${activePreset.id}-${result.actualKB}KB.jpg`);
+      notify(`Compressed JPG (${result.actualKB} KB) downloaded!`);
+    } catch (e) {
+      console.error('Compression error:', e);
+    }
+    setIsExporting(false);
+  };
+
   const handleDownloadSinglePdf = async () => {
     if (!croppedCanvasRef.current) return;
     setIsExporting(true);
@@ -189,6 +209,25 @@ export const PrintSheetComposer: React.FC = () => {
     setIsExporting(false);
   };
 
+  const handleDownloadAuditReportPdf = async () => {
+    if (!croppedCanvasRef.current) return;
+    setIsExporting(true);
+    try {
+      const pdfBytes = await generateAuditCertificatePdf(
+        croppedCanvasRef.current,
+        activePreset,
+        qualityAnalysis,
+        complianceChecks
+      );
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      downloadBlob(blob, `printmint-compliance-audit-certificate.pdf`);
+      notify('Compliance Audit Certificate PDF downloaded!');
+    } catch (e) {
+      console.error('Audit PDF Export Error:', e);
+    }
+    setIsExporting(false);
+  };
+
   const handleDownloadAllBundle = async () => {
     handleDownloadSingleJpg();
     await new Promise((r) => setTimeout(r, 400));
@@ -212,24 +251,24 @@ export const PrintSheetComposer: React.FC = () => {
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Preview & Export Printable Layout</h2>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Generate 300 DPI high-resolution JPGs, single PDFs, and multi-photo printable layout sheets.
+            Generate 300 DPI high-resolution JPGs, portal-constrained files (&lt; 240 KB), &amp; PDF sheets.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsFamilyModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all"
+          >
+            <Users className="w-4 h-4 text-emerald-400" /> Family Batch Print Sheet
+          </button>
+
           <button
             onClick={handleDownloadAllBundle}
             disabled={isExporting}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 hover:brightness-110 transition-all disabled:opacity-50"
           >
             <Sparkles className="w-4 h-4 text-amber-950" /> Download All Bundle
-          </button>
-
-          <button
-            onClick={() => setStep('editor')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-bold border border-slate-800 transition-all"
-          >
-            <RefreshCw className="w-3.5 h-3.5" /> Back to Crop Editor
           </button>
         </div>
       </div>
@@ -290,6 +329,79 @@ export const PrintSheetComposer: React.FC = () => {
               <CheckCircle2 className="w-4 h-4" /> {copiedNotification}
             </div>
           )}
+
+          {/* Online Application File Size Compressor (< 240KB / 300KB) */}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-white flex items-center gap-2">
+                <Gauge className="w-4 h-4 text-cyan-400" /> Target Portal File Size Limit
+              </span>
+              {compressedKBResult && (
+                <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                  Size: {compressedKBResult} KB
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setTargetKBLimit(240)}
+                className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                  targetKBLimit === 240
+                    ? 'bg-cyan-500 text-slate-950 border-cyan-400'
+                    : 'bg-slate-950 text-slate-400 border-slate-800'
+                }`}
+              >
+                &lt; 240 KB (US)
+              </button>
+              <button
+                onClick={() => setTargetKBLimit(300)}
+                className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                  targetKBLimit === 300
+                    ? 'bg-cyan-500 text-slate-950 border-cyan-400'
+                    : 'bg-slate-950 text-slate-400 border-slate-800'
+                }`}
+              >
+                &lt; 300 KB (India)
+              </button>
+              <button
+                onClick={() => setTargetKBLimit(500)}
+                className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                  targetKBLimit === 500
+                    ? 'bg-cyan-500 text-slate-950 border-cyan-400'
+                    : 'bg-slate-950 text-slate-400 border-slate-800'
+                }`}
+              >
+                &lt; 500 KB
+              </button>
+            </div>
+
+            <button
+              onClick={handleDownloadCompressedJpg}
+              disabled={isExporting}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold border border-slate-700 transition-all disabled:opacity-50"
+            >
+              <Download className="w-3.5 h-3.5" /> Download Constrained JPG (&lt; {targetKBLimit} KB)
+            </button>
+          </div>
+
+          {/* Official Audit Certificate PDF Download */}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3 shadow-2xl">
+            <h3 className="font-extrabold text-white text-base flex items-center gap-2">
+              <Award className="w-4 h-4 text-amber-400" /> Compliance Audit Certificate
+            </h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Official PDF verification report containing exact 300 DPI mm dimensions, face coverage %, eye alignment, & audit status.
+            </p>
+
+            <button
+              onClick={handleDownloadAuditReportPdf}
+              disabled={isExporting}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-bold text-xs border border-amber-500/30 transition-all disabled:opacity-50"
+            >
+              <FileText className="w-4 h-4 text-amber-400" /> Download Audit Certificate (PDF)
+            </button>
+          </div>
 
           {/* Layout Option Selector */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3 shadow-2xl">
@@ -361,33 +473,13 @@ export const PrintSheetComposer: React.FC = () => {
               <Printer className="w-4 h-4 stroke-[2.5]" /> Download {currentSheetPreset.name}
             </button>
           </div>
-
-          {/* Export Single Files */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-2xl">
-            <h3 className="font-extrabold text-white text-base">Single Photo Files</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              High-resolution single file exports for online passport or visa application portals.
-            </p>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={handleDownloadSingleJpg}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs border border-slate-800 transition-all"
-              >
-                <Download className="w-3.5 h-3.5 text-emerald-400" /> Download JPG
-              </button>
-
-              <button
-                onClick={handleDownloadSinglePdf}
-                disabled={isExporting}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs border border-slate-800 transition-all disabled:opacity-50"
-              >
-                <FileText className="w-3.5 h-3.5 text-cyan-400" /> Single PDF
-              </button>
-            </div>
-          </div>
         </div>
       </div>
+
+      <FamilyBatchModal
+        isOpen={isFamilyModalOpen}
+        onClose={() => setIsFamilyModalOpen(false)}
+      />
     </div>
   );
 };

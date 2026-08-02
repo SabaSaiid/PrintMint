@@ -223,5 +223,30 @@ export function evaluateCompliance(
     recommendation: 'Use the Background Whitening tool to ensure a clean, compliant backdrop.',
   });
 
+  // 8. Clothing Contrast Check
+  if (quality?.clothingContrastStatus) {
+    if (quality.clothingContrastStatus.hasLowContrast) {
+      checks.push({
+        id: 'clothing_contrast',
+        category: 'background',
+        title: 'Clothing Contrast Warning',
+        passed: false,
+        severity: 'warning',
+        reason: 'Low contrast between clothing and background (white/light shirt on light background).',
+        recommendation: quality.clothingContrastStatus.recommendation,
+      });
+    } else {
+      checks.push({
+        id: 'clothing_contrast',
+        category: 'background',
+        title: 'Clothing Contrast',
+        passed: true,
+        severity: 'pass',
+        reason: 'Good contrast between clothing shoulders and background.',
+        recommendation: 'Shoulder contours are clearly defined.',
+      });
+    }
+  }
+
   return checks;
 }

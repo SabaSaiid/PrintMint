@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Cropper from 'react-easy-crop';
 import { useEditorStore } from '../../store/useEditorStore';
-import { RotateCw, ZoomIn, Target, RefreshCw, Compass, ShieldCheck } from 'lucide-react';
+import { RotateCw, ZoomIn, Target, RefreshCw, Compass, ShieldCheck, Eye, X } from 'lucide-react';
 import { calculateAutoCrop } from '../../lib/face/measureHead';
+import { BeforeAfterSlider } from './BeforeAfterSlider';
+import { whitenBackground } from '../../lib/background/whiten';
 
 export const CropCanvas: React.FC = () => {
   const {
@@ -13,6 +15,10 @@ export const CropCanvas: React.FC = () => {
     crop,
     zoom,
     rotation,
+    croppedAreaPixels,
+    adjustments,
+    bgOption,
+    bgHexOverride,
     setCrop,
     setZoom,
     setRotation,
@@ -20,6 +26,43 @@ export const CropCanvas: React.FC = () => {
   } = useEditorStore();
 
   const [showGuides, setShowGuides] = useState(true);
+  const [showBeforeAfterModal, setShowBeforeAfterModal] = useState(false);
+  const [processedCanvas, setProcessedCanvas] = useState<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    if (!imageUrl || !croppedAreaPixels) return;
+
+    const img = new Image();
+    img.src = imageUrl;
+    img.onload = () => {
+      const croppedCanvas = document.createElement('canvas');
+      croppedCanvas.width = croppedAreaPixels.width;
+      croppedCanvas.height = croppedAreaPixels.height;
+      const ctx = croppedCanvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.filter = `brightness(${adjustments.brightness}%) contrast(${adjustments.contrast}%) saturate(${adjustments.saturation}%)`;
+      ctx.drawImage(
+        img,
+        croppedAreaPixels.x,
+        croppedAreaPixels.y,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height,
+        0,
+        0,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height
+      );
+      ctx.filter = 'none';
+
+      let finalCropped = croppedCanvas;
+      if (bgOption === 'whiten' || bgOption === 'remove') {
+        finalCropped = whitenBackground(croppedCanvas, bgHexOverride);
+      }
+
+      setProcessedCanvas(finalCropped);
+    };
+  }, [imageUrl, croppedAreaPixels, adjustments, bgOption, bgHexOverride]);
 
   if (!imageUrl) return null;
 
@@ -62,6 +105,13 @@ export const CropCanvas: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowBeforeAfterModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 transition-all"
+          >
+            <Eye className="w-3.5 h-3.5" /> Compare Before/After
+          </button>
+
           <button
             onClick={() => setShowGuides(!showGuides)}
             className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border transition-all ${
@@ -214,6 +264,31 @@ export const CropCanvas: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Before / After Comparison Modal */}
+      {showBeforeAfterModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-4">
+          <div className="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="font-extrabold text-white text-base flex items-center gap-2">
+                <Eye className="w-4 h-4 text-amber-400" /> Interactive Before / After Comparison
+              </h3>
+              <button
+                onClick={() => setShowBeforeAfterModal(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-full hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <BeforeAfterSlider
+              originalUrl={imageUrl}
+              processedCanvas={processedCanvas}
+              aspectRatio={activePreset.aspectRatio}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

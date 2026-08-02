@@ -7,6 +7,7 @@ import { computeBlurScore } from '../../lib/quality/blurScore';
 import { analyzeLighting } from '../../lib/quality/lighting';
 import { checkTilt } from '../../lib/quality/tilt';
 import { evaluateCompliance } from '../../lib/compliance/checkCompliance';
+import { checkClothingContrast } from '../../lib/quality/contrastCheck';
 import { WebcamCaptureModal } from './WebcamCaptureModal';
 
 export const FileDropzone: React.FC = () => {
@@ -85,6 +86,7 @@ export const FileDropzone: React.FC = () => {
         const blurRes = computeBlurScore(imageData);
         const lightingRes = analyzeLighting(imageData);
         const tiltRes = checkTilt(faceRes.tiltAngleDeg);
+        const contrastRes = checkClothingContrast(imageData, activePreset.bgHex);
 
         const qualityData = {
           blurScore: blurRes.score,
@@ -115,6 +117,13 @@ export const FileDropzone: React.FC = () => {
               !faceRes.eyeBlinkScore.leftEyeOpen || !faceRes.eyeBlinkScore.rightEyeOpen
                 ? ('warning' as const)
                 : ('good' as const),
+          },
+
+          clothingContrastStatus: {
+            hasLowContrast: contrastRes.hasLowContrast,
+            contrastRatio: contrastRes.contrastRatio,
+            severity: contrastRes.hasLowContrast ? ('warning' as const) : ('good' as const),
+            recommendation: contrastRes.recommendation,
           },
         };
 

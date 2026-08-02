@@ -81,6 +81,13 @@ export interface QualityAnalysis {
     eyesClosed: boolean;
     severity: 'good' | 'warning' | 'fail';
   };
+
+  clothingContrastStatus?: {
+    hasLowContrast: boolean;
+    contrastRatio: number;
+    severity: 'good' | 'warning' | 'fail';
+    recommendation: string;
+  };
 }
 
 export interface ComplianceCheck {
@@ -119,3 +126,11 @@ export interface ImageAdjustments {
   cropX: number; // normalized or px
   cropY: number;
 }
+
+export interface FamilyMemberRecord {
+  id: string;
+  name: string;
+  dataUrl: string;
+  copies: number;
+}
+
