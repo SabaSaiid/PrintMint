@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
-import { Upload, Camera, Sparkles, ShieldCheck, AlertCircle, FileImage } from 'lucide-react';
+import { Upload, Camera, Sparkles, ShieldCheck, AlertCircle, FileImage, Cpu, Lock, CheckCircle2 } from 'lucide-react';
 import { detectFaceInImage } from '../../lib/face/detectFace';
 import { calculateAutoCrop } from '../../lib/face/measureHead';
 import { computeBlurScore } from '../../lib/quality/blurScore';
@@ -35,7 +35,6 @@ export const FileDropzone: React.FC = () => {
     try {
       let targetFile = file;
 
-      // Handle iPhone HEIC / HEIF files
       if (
         file.name.toLowerCase().endsWith('.heic') ||
         file.name.toLowerCase().endsWith('.heif') ||
@@ -53,13 +52,11 @@ export const FileDropzone: React.FC = () => {
             type: 'image/jpeg',
           });
         } catch (heicErr) {
-          console.warn('HEIC conversion fallback failed:', heicErr);
+          console.warn('HEIC conversion fallback:', heicErr);
         }
       }
 
       const imageUrl = URL.createObjectURL(targetFile);
-
-      // Load Image onto HTMLImageElement to derive dimensions & face detection
       const img = new Image();
       img.src = imageUrl;
       await new Promise((resolve, reject) => {
@@ -69,17 +66,14 @@ export const FileDropzone: React.FC = () => {
 
       setImageFile(targetFile, imageUrl, { width: img.naturalWidth, height: img.naturalHeight });
 
-      // Run MediaPipe Face Detection
       setIsDetectingFace(true);
       const faceRes = await detectFaceInImage(img);
       setFaceResult(faceRes);
       setIsDetectingFace(false);
 
-      // Calculate Auto-Crop
       const autoCropBox = calculateAutoCrop(img.naturalWidth, img.naturalHeight, faceRes, activePreset);
       setCroppedAreaPixels(autoCropBox);
 
-      // Calculate quality analysis on offscreen canvas
       const offscreen = document.createElement('canvas');
       offscreen.width = img.naturalWidth;
       offscreen.height = img.naturalHeight;
@@ -124,8 +118,6 @@ export const FileDropzone: React.FC = () => {
         };
 
         setQualityAnalysis(qualityData);
-
-        // Evaluate initial compliance rules
         const initialChecks = evaluateCompliance(activePreset, faceRes, qualityData);
         setComplianceChecks(initialChecks);
       }
@@ -153,29 +145,36 @@ export const FileDropzone: React.FC = () => {
     }
   };
 
-  // Generate synthetic compliant test image for demonstration
-  const handleLoadSample = () => {
+  // Helper to generate synthetic test portraits
+  const handleLoadSample = (mode: 'standard' | 'tilted' | 'dark') => {
     const canvas = document.createElement('canvas');
     canvas.width = 1200;
     canvas.height = 1600;
     const ctx = canvas.getContext('2d')!;
 
-    // Light neutral background
-    ctx.fillStyle = '#F3F4F6';
+    // Background color based on mode
+    ctx.fillStyle = mode === 'dark' ? '#1E293B' : '#F3F4F6';
     ctx.fillRect(0, 0, 1200, 1600);
 
+    ctx.save();
+    if (mode === 'tilted') {
+      ctx.translate(600, 750);
+      ctx.rotate((6.5 * Math.PI) / 180); // 6.5 degree tilt
+      ctx.translate(-600, -750);
+    }
+
     // Torso / Shoulders
-    ctx.fillStyle = '#1E293B';
+    ctx.fillStyle = mode === 'dark' ? '#0F172A' : '#1E293B';
     ctx.beginPath();
     ctx.ellipse(600, 1500, 450, 400, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Neck
-    ctx.fillStyle = '#E5C09B';
+    ctx.fillStyle = mode === 'dark' ? '#A37856' : '#E5C09B';
     ctx.fillRect(520, 950, 160, 200);
 
-    // Head / Oval face
-    ctx.fillStyle = '#F2CDA7';
+    // Oval face
+    ctx.fillStyle = mode === 'dark' ? '#B88B64' : '#F2CDA7';
     ctx.beginPath();
     ctx.ellipse(600, 750, 260, 340, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -216,30 +215,33 @@ export const FileDropzone: React.FC = () => {
     ctx.lineTo(670, 900);
     ctx.stroke();
 
+    ctx.restore();
+
     canvas.toBlob((blob) => {
       if (blob) {
-        const sampleFile = new File([blob], 'sample-passport-portrait.jpg', { type: 'image/jpeg' });
-        handleFile(sampleFile);
+        const file = new File([blob], `sample-${mode}-portrait.jpg`, { type: 'image/jpeg' });
+        handleFile(file);
       }
     }, 'image/jpeg');
   };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
-      {/* Hero Section */}
+      {/* Hero Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
-          <Sparkles className="w-3.5 h-3.5" /> 100% Free Client-Side Processing • Your Photos Never Leave Your Device
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold mb-4 shadow-lg shadow-emerald-500/5">
+          <Lock className="w-3.5 h-3.5" /> 100% In-Browser WASM • Zero Upload Security Guarantee
         </div>
+
         <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-          Create Compliant Passport & ID Photos <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">in Seconds</span>
+          Passport & ID Photo <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">Compliance Assistant</span>
         </h1>
         <p className="mt-3 text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-          AI face landmarker auto-detects face position, aligns eye levels, checks lighting & blur quality, and exports exact printable PDF sheets.
+          Auto-centers face position, levels eye alignment, checks lighting & blur quality, and generates printable 300 DPI layout sheets.
         </p>
       </div>
 
-      {/* Main Upload Dropzone Box */}
+      {/* Main Dropzone Box */}
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -247,10 +249,10 @@ export const FileDropzone: React.FC = () => {
         }}
         onDragLeave={() => setIsHovered(false)}
         onDrop={handleDrop}
-        className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all bg-slate-900/60 backdrop-blur-xl ${
+        className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all duration-300 bg-slate-900/60 backdrop-blur-xl ${
           isHovered
-            ? 'border-emerald-400 bg-emerald-500/5 scale-[1.01]'
-            : 'border-slate-700/80 hover:border-slate-600'
+            ? 'border-emerald-400 bg-emerald-500/10 scale-[1.01] shadow-2xl shadow-emerald-500/10'
+            : 'border-slate-800 hover:border-slate-700'
         }`}
       >
         <input
@@ -271,14 +273,18 @@ export const FileDropzone: React.FC = () => {
 
         {isLoading ? (
           <div className="py-12 flex flex-col items-center justify-center">
-            <div className="w-14 h-14 rounded-full border-4 border-emerald-500/30 border-t-emerald-400 animate-spin mb-4" />
+            <div className="relative w-16 h-16 mb-4">
+              <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20" />
+              <div className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin" />
+              <Cpu className="w-6 h-6 text-emerald-400 absolute inset-0 m-auto animate-pulse" />
+            </div>
             <h3 className="text-lg font-bold text-white">Analyzing Facial Landmarks...</h3>
-            <p className="text-xs text-slate-400 mt-1">Running MediaPipe WASM face landmarker & quality checks</p>
+            <p className="text-xs text-slate-400 mt-1">Running MediaPipe 478 3D landmark engine & compliance checks</p>
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mb-5 text-emerald-400 shadow-xl shadow-slate-950/50">
-              <Upload className="w-8 h-8 stroke-[1.75]" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-900 border border-slate-700/80 flex items-center justify-center mb-5 text-emerald-400 shadow-xl shadow-slate-950/80 group">
+              <Upload className="w-8 h-8 stroke-[1.75] group-hover:scale-110 transition-transform" />
             </div>
 
             <h3 className="text-xl font-bold text-white">Drag and drop your photo here</h3>
@@ -290,28 +296,46 @@ export const FileDropzone: React.FC = () => {
             <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5"
               >
                 <FileImage className="w-4 h-4 stroke-[2.5]" /> Browse Photo
               </button>
 
               <button
                 onClick={() => cameraInputRef.current?.click()}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 shadow-md transition-all"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 shadow-md transition-all"
               >
                 <Camera className="w-4 h-4 text-emerald-400" /> Use Camera
               </button>
             </div>
 
-            {/* Instant Demo Sample Button */}
-            <div className="mt-8 pt-6 border-t border-slate-800/80 flex items-center justify-center gap-3">
-              <span className="text-xs text-slate-400">Don't have a photo ready?</span>
-              <button
-                onClick={handleLoadSample}
-                className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 underline underline-offset-4 flex items-center gap-1"
-              >
-                <Sparkles className="w-3.5 h-3.5" /> Try Sample Portrait
-              </button>
+            {/* 3 Sample Test Photo Buttons */}
+            <div className="mt-8 pt-6 border-t border-slate-800/80 w-full max-w-lg">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">
+                Try Sample Test Cases
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button
+                  onClick={() => handleLoadSample('standard')}
+                  className="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-all"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Standard
+                </button>
+
+                <button
+                  onClick={() => handleLoadSample('tilted')}
+                  className="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-all"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Tilted Pose
+                </button>
+
+                <button
+                  onClick={() => handleLoadSample('dark')}
+                  className="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-all"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> Dark Lighting
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -321,33 +345,6 @@ export const FileDropzone: React.FC = () => {
             <AlertCircle className="w-4 h-4 flex-shrink-0" /> {errorMsg}
           </div>
         )}
-      </div>
-
-      {/* Feature Highlights Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-        <div className="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3 font-bold text-sm">1</div>
-          <h4 className="font-bold text-white text-sm">Face Auto-Centering</h4>
-          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-            MediaPipe 478 3D landmark points automatically center your eyes & head height to exact country specs.
-          </p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3 font-bold text-sm">2</div>
-          <h4 className="font-bold text-white text-sm">Compliance Assistant</h4>
-          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-            Explains WHY a photo passes or fails blur, lighting, eye closure, or tilt angle checks before export.
-          </p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3 font-bold text-sm">3</div>
-          <h4 className="font-bold text-white text-sm">Printable PDF Sheets</h4>
-          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-            Generates exact 300 DPI 4x6" and A4 tiled sheets with cutting crop marks for instant home/pharmacy printing.
-          </p>
-        </div>
       </div>
     </div>
   );
