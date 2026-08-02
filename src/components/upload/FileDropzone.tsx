@@ -7,6 +7,7 @@ import { computeBlurScore } from '../../lib/quality/blurScore';
 import { analyzeLighting } from '../../lib/quality/lighting';
 import { checkTilt } from '../../lib/quality/tilt';
 import { evaluateCompliance } from '../../lib/compliance/checkCompliance';
+import { WebcamCaptureModal } from './WebcamCaptureModal';
 
 export const FileDropzone: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -302,10 +303,10 @@ export const FileDropzone: React.FC = () => {
               </button>
 
               <button
-                onClick={() => cameraInputRef.current?.click()}
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 shadow-md transition-all"
+                onClick={() => useEditorStore.getState().setWebcamModalOpen(true)}
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 shadow-md transition-all hover:border-emerald-500/50"
               >
-                <Camera className="w-4 h-4 text-emerald-400" /> Use Camera
+                <Camera className="w-4 h-4 text-emerald-400" /> Live Webcam Studio
               </button>
             </div>
 
@@ -346,6 +347,8 @@ export const FileDropzone: React.FC = () => {
           </div>
         )}
       </div>
+
+      <WebcamCaptureModal />
     </div>
   );
 };

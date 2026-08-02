@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
-import { Sun, Sliders, Sparkles, RefreshCw, Palette, Layers, Info } from 'lucide-react';
+import { Sun, Sliders, Sparkles, RefreshCw, Palette, Layers, Info, Wand2, RotateCw, ZoomIn, CheckCircle } from 'lucide-react';
+import { calculateAutoFix, calculateAutoLightingFix } from '../../lib/quality/autoFix';
+import { removeBackgroundAI } from '../../lib/background/aiBackground';
 
 export const AdjustmentPanel: React.FC = () => {
   const {
@@ -12,9 +14,22 @@ export const AdjustmentPanel: React.FC = () => {
     bgHexOverride,
     setBgHexOverride,
     activePreset,
+    faceResult,
+    qualityAnalysis,
+    setRotation,
+    setZoom,
+    setCrop,
+    imageFile,
+    setImageFile,
+    imageUrl,
+    imageDimensions,
+    isAIProcessingBg,
+    setIsAIProcessingBg,
+    aiBgProgress,
+    setAiBgProgress,
   } = useEditorStore();
 
-  const [activeTab, setActiveTab] = useState<'background' | 'lighting'>('background');
+  const [activeTab, setActiveTab] = useState<'autofix' | 'background' | 'lighting'>('autofix');
 
   const bgSwatches = [
     { name: 'Pure White (US/India)', hex: '#FFFFFF' },
@@ -24,14 +39,73 @@ export const AdjustmentPanel: React.FC = () => {
     { name: 'Soft Blue', hex: '#D0E3FF' },
   ];
 
+  // 1-Click Auto-Fix Handlers
+  const handleAutoLevelTilt = () => {
+    const fix = calculateAutoFix(faceResult, activePreset, adjustments);
+    setRotation(fix.rotation);
+  };
+
+  const handleAutoCenterScale = () => {
+    const fix = calculateAutoFix(faceResult, activePreset, adjustments);
+    setZoom(fix.zoom);
+    setCrop(fix.crop);
+  };
+
+  const handleAutoLighting = () => {
+    const newLighting = calculateAutoLightingFix(qualityAnalysis, adjustments);
+    setAdjustments(() => newLighting);
+  };
+
+  const handleFullAutoFix = () => {
+    handleAutoLevelTilt();
+    handleAutoCenterScale();
+    handleAutoLighting();
+  };
+
+  const handleTriggerAIRemoval = async () => {
+    if (!imageFile && !imageUrl) return;
+    setBgOption('remove');
+    setIsAIProcessingBg(true);
+    setAiBgProgress(0.1);
+
+    try {
+      const source = imageFile || imageUrl!;
+      const processedDataUrl = await removeBackgroundAI(source, bgHexOverride, (info) => {
+        setAiBgProgress(info.progress);
+      });
+
+      // Convert processed data url to File
+      const res = await fetch(processedDataUrl);
+      const blob = await res.blob();
+      const newFile = new File([blob], `ai_bg_removed_${Date.now()}.png`, { type: 'image/png' });
+
+      setImageFile(newFile, processedDataUrl, imageDimensions || undefined);
+    } catch (e) {
+      console.error('AI background error:', e);
+    } finally {
+      setIsAIProcessingBg(false);
+    }
+  };
+
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-5 shadow-2xl">
       {/* Tab Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <button
+            onClick={() => setActiveTab('autofix')}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'autofix'
+                ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Wand2 className="w-3.5 h-3.5 text-amber-950" /> 1-Click Auto
+          </button>
+
           <button
             onClick={() => setActiveTab('background')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'background'
                 ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
                 : 'text-slate-400 hover:text-slate-200'
@@ -42,13 +116,13 @@ export const AdjustmentPanel: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('lighting')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'lighting'
                 ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Sliders className="w-3.5 h-3.5" /> Lighting & Color
+            <Sliders className="w-3.5 h-3.5" /> Lighting
           </button>
         </div>
 
@@ -60,13 +134,61 @@ export const AdjustmentPanel: React.FC = () => {
         </button>
       </div>
 
-      {/* Tab 1: Background Handling */}
+      {/* Tab 1: 1-Click Auto Fix Suite */}
+      {activeTab === 'autofix' && (
+        <div className="space-y-3">
+          <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold text-white block">Complete Smart Auto-Fix</span>
+              <span className="text-[11px] text-slate-400">Levels eye tilt, centers head height, & balances lighting</span>
+            </div>
+
+            <button
+              onClick={handleFullAutoFix}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 hover:brightness-110 transition-all"
+            >
+              <Sparkles className="w-3.5 h-3.5" /> Auto-Fix All
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+            <button
+              onClick={handleAutoLevelTilt}
+              className="p-3 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-left transition-all group"
+            >
+              <RotateCw className="w-4 h-4 text-emerald-400 mb-1 group-hover:rotate-45 transition-transform" />
+              <span className="text-xs font-bold text-white block">Level Tilt</span>
+              <span className="text-[10px] text-slate-400 block">Align eyes horizontally</span>
+            </button>
+
+            <button
+              onClick={handleAutoCenterScale}
+              className="p-3 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-left transition-all group"
+            >
+              <ZoomIn className="w-4 h-4 text-teal-400 mb-1 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-bold text-white block">Center & Scale</span>
+              <span className="text-[10px] text-slate-400 block">Snap to preset coverage</span>
+            </button>
+
+            <button
+              onClick={handleAutoLighting}
+              className="p-3 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-left transition-all group"
+            >
+              <Sun className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-bold text-white block">Fix Lighting</span>
+              <span className="text-[10px] text-slate-400 block">Balance exposure</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 2: Background Options */}
       {activeTab === 'background' && (
         <div className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold text-slate-300">
-                Background Mode ({activePreset.backgroundColor.toUpperCase()})
+                Background Processing ({activePreset.backgroundColor.toUpperCase()})
               </label>
             </div>
 
@@ -94,17 +216,34 @@ export const AdjustmentPanel: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setBgOption('remove')}
-                className={`px-3 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                onClick={handleTriggerAIRemoval}
+                disabled={isAIProcessingBg}
+                className={`px-3 py-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1 ${
                   bgOption === 'remove'
                     ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-md shadow-emerald-500/20'
                     : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
                 }`}
               >
-                Full AI Remove
+                {isAIProcessingBg ? 'Processing...' : 'AI Remove'}
               </button>
             </div>
           </div>
+
+          {/* AI Progress Bar */}
+          {isAIProcessingBg && (
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5">
+              <div className="flex justify-between text-[10px] font-bold text-slate-300">
+                <span>Removing Background via Client AI...</span>
+                <span>{(aiBgProgress * 100).toFixed(0)}%</span>
+              </div>
+              <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-emerald-400 transition-all duration-300"
+                  style={{ width: `${Math.max(10, aiBgProgress * 100)}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Preset Color Swatches */}
           {bgOption !== 'original' && (
@@ -131,17 +270,10 @@ export const AdjustmentPanel: React.FC = () => {
               </div>
             </div>
           )}
-
-          <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
-            <Info className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-            <span>
-              Threshold whitening operates instantly on Canvas 2D without sending photos off your device.
-            </span>
-          </div>
         </div>
       )}
 
-      {/* Tab 2: Lighting & Color Sliders */}
+      {/* Tab 3: Lighting & Color Sliders */}
       {activeTab === 'lighting' && (
         <div className="space-y-5">
           {/* Brightness */}

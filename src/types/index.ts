@@ -1,4 +1,4 @@
-export type CountryCode = 'US' | 'UK' | 'IN' | 'EU' | 'CUSTOM';
+export type CountryCode = 'US' | 'UK' | 'IN' | 'EU' | 'CA' | 'AU' | 'JP' | 'CN' | 'SG' | 'CUSTOM';
 
 export type DocumentType = 'passport' | 'oci' | 'visa' | 'id_card' | 'custom';
 
@@ -20,6 +20,7 @@ export interface PhotoPreset {
   notes: string;
   lastUpdated: string; // ISO date string e.g. '2025-09-01'
   officialSourceUrl?: string;
+  isCustom?: boolean;
 }
 
 export interface LandmarkPoint {
@@ -92,15 +93,21 @@ export interface ComplianceCheck {
   recommendation: string;
 }
 
+export type PaperFormat = '4x6' | '5x7' | 'A4' | 'letter';
+
 export interface PrintSheetPreset {
   id: string;
   name: string;
+  paperFormat: PaperFormat;
   sheetWidthInches: number; // e.g. 4
   sheetHeightInches: number; // e.g. 6
   rows: number;
   cols: number;
   marginMm: number;
   gapMm: number;
+  showCutMarks?: boolean;
+  cutMarkColorHex?: string;
+  showPhotoBorder?: boolean;
 }
 
 export interface ImageAdjustments {
