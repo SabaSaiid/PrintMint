@@ -134,3 +134,15 @@ export interface FamilyMemberRecord {
   copies: number;
 }
 
+export interface AppSettings {
+  defaultPaperFormat: PaperFormat;
+  autoCenterOnLoad: boolean;
+  guideOpacity: number; // 0.1 to 1.0
+  guideStyle: 'solid' | 'dashed' | 'neon';
+  targetKBLimitDefault: number; // 240 | 300 | 500
+  dpiQuality: 300 | 600;
+  showCutMarksDefault: boolean;
+  showPhotoBorderDefault: boolean;
+}
+
+

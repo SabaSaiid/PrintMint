@@ -276,13 +276,48 @@ export const AdjustmentPanel: React.FC = () => {
       {/* Tab 3: Lighting & Color Sliders */}
       {activeTab === 'lighting' && (
         <div className="space-y-5">
+          {/* Quick Studio Presets */}
+          <div>
+            <span className="text-xs font-bold text-slate-300 block mb-2">Quick Studio Presets</span>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setAdjustments((prev) => ({ ...prev, brightness: 105, contrast: 105, saturation: 100 }))}
+                className="px-2.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[11px] font-semibold text-slate-300 transition-all text-center"
+              >
+                Studio Balanced
+              </button>
+
+              <button
+                onClick={() => setAdjustments((prev) => ({ ...prev, brightness: 115, contrast: 100, saturation: 95 }))}
+                className="px-2.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[11px] font-semibold text-amber-300 transition-all text-center"
+              >
+                Lighten Shadows
+              </button>
+
+              <button
+                onClick={() => setAdjustments((prev) => ({ ...prev, brightness: 100, contrast: 115, saturation: 105 }))}
+                className="px-2.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[11px] font-semibold text-emerald-300 transition-all text-center"
+              >
+                Crisp Contrast
+              </button>
+            </div>
+          </div>
+
           {/* Brightness */}
           <div>
             <div className="flex justify-between text-xs font-bold text-slate-300 mb-2">
               <span className="flex items-center gap-1.5">
                 <Sun className="w-3.5 h-3.5 text-amber-400" /> Brightness
               </span>
-              <span className="text-emerald-400 font-mono">{adjustments.brightness}%</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setAdjustments((prev) => ({ ...prev, brightness: 100 }))}
+                  className="text-[9px] uppercase font-bold text-slate-400 hover:text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"
+                >
+                  Reset
+                </button>
+                <span className="text-emerald-400 font-mono">{adjustments.brightness}%</span>
+              </div>
             </div>
             <input
               type="range"
@@ -302,7 +337,15 @@ export const AdjustmentPanel: React.FC = () => {
               <span className="flex items-center gap-1.5">
                 <Sliders className="w-3.5 h-3.5 text-emerald-400" /> Contrast
               </span>
-              <span className="text-emerald-400 font-mono">{adjustments.contrast}%</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setAdjustments((prev) => ({ ...prev, contrast: 100 }))}
+                  className="text-[9px] uppercase font-bold text-slate-400 hover:text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"
+                >
+                  Reset
+                </button>
+                <span className="text-emerald-400 font-mono">{adjustments.contrast}%</span>
+              </div>
             </div>
             <input
               type="range"
@@ -322,7 +365,15 @@ export const AdjustmentPanel: React.FC = () => {
               <span className="flex items-center gap-1.5">
                 <Palette className="w-3.5 h-3.5 text-indigo-400" /> Color Saturation
               </span>
-              <span className="text-emerald-400 font-mono">{adjustments.saturation}%</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setAdjustments((prev) => ({ ...prev, saturation: 100 }))}
+                  className="text-[9px] uppercase font-bold text-slate-400 hover:text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"
+                >
+                  Reset
+                </button>
+                <span className="text-emerald-400 font-mono">{adjustments.saturation}%</span>
+              </div>
             </div>
             <input
               type="range"

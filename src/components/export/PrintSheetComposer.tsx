@@ -326,9 +326,32 @@ export const PrintSheetComposer: React.FC = () => {
         <div className="lg:col-span-5 space-y-6">
           {copiedNotification && (
             <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs font-bold flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4" /> {copiedNotification}
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> {copiedNotification}
             </div>
           )}
+
+          {/* Single High-Res Photo Exports */}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3 shadow-2xl">
+            <span className="text-xs font-bold text-white flex items-center gap-2">
+              <Download className="w-4 h-4 text-emerald-400" /> Single Photo High-Res Exports
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleDownloadSingleJpg}
+                disabled={isExporting}
+                className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all disabled:opacity-50"
+              >
+                <Download className="w-3.5 h-3.5 text-emerald-400" /> Single JPG (300 DPI)
+              </button>
+              <button
+                onClick={handleDownloadSinglePdf}
+                disabled={isExporting}
+                className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all disabled:opacity-50"
+              >
+                <FileText className="w-3.5 h-3.5 text-emerald-400" /> Single PDF
+              </button>
+            </div>
+          </div>
 
           {/* Online Application File Size Compressor (< 240KB / 300KB) */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3 shadow-2xl">

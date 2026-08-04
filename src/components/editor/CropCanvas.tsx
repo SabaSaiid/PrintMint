@@ -159,19 +159,39 @@ export const CropCanvas: React.FC = () => {
         {/* Real-time Canvas HUD Badges */}
         <div className="absolute top-3 left-3 pointer-events-none flex flex-col gap-1.5 z-10">
           {headRatioPercent !== null && (
-            <div className="bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-200 flex items-center gap-1.5 shadow-lg">
+            <div className="bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-200 flex items-center gap-1.5 shadow-lg">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>Head: <strong className="text-emerald-400">{headRatioPercent}%</strong></span>
             </div>
           )}
 
-          <div className="bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-200 flex items-center gap-1.5 shadow-lg">
+          <div className="bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-200 flex items-center gap-1.5 shadow-lg">
             <Compass className="w-3.5 h-3.5 text-cyan-400" />
             <span>Roll Tilt: <strong className="text-cyan-400">{tiltAngle}°</strong></span>
           </div>
         </div>
 
-        {/* Passport Compliance Guidelines Overlay */}
+        {/* HUD Status Top-Right */}
+        <div className="absolute top-3 right-3 pointer-events-none z-10">
+          {headRatioPercent !== null && (
+            <div className={`px-2.5 py-1 rounded-lg border text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md shadow-lg flex items-center gap-1.5 ${
+              headRatioPercent >= activePreset.headHeightMinRatio * 100 && headRatioPercent <= activePreset.headHeightMaxRatio * 100
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${
+                headRatioPercent >= activePreset.headHeightMinRatio * 100 && headRatioPercent <= activePreset.headHeightMaxRatio * 100
+                  ? 'bg-emerald-400 animate-ping'
+                  : 'bg-amber-400 animate-pulse'
+              }`} />
+              {headRatioPercent >= activePreset.headHeightMinRatio * 100 && headRatioPercent <= activePreset.headHeightMaxRatio * 100
+                ? 'Height Compliant'
+                : 'Adjust Framing'}
+            </div>
+          )}
+        </div>
+
+        {/* Passport Compliance Guidelines & Oval Target Overlay */}
         {showGuides && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-0">
             <div
@@ -185,7 +205,7 @@ export const CropCanvas: React.FC = () => {
               {/* Vertical Center Hairline */}
               <div className="absolute left-1/2 top-0 bottom-0 border-l border-emerald-500/30 border-dashed" />
 
-              {/* Head Target Zone */}
+              {/* Target Head Zone Box */}
               <div
                 className="absolute left-4 right-4 border-2 border-dashed border-emerald-400/80 bg-emerald-500/5 rounded-xl flex items-center justify-center"
                 style={{
@@ -193,7 +213,13 @@ export const CropCanvas: React.FC = () => {
                   height: `${activePreset.headHeightMaxRatio * 100}%`,
                 }}
               >
-                <span className="text-[10px] uppercase font-extrabold tracking-wider text-emerald-400 bg-slate-950/90 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                {/* SVG Target Oval Guide Contour */}
+                <svg className="w-full h-full opacity-40 text-emerald-400" viewBox="0 0 100 120" preserveAspectRatio="none">
+                  <ellipse cx="50" cy="55" rx="35" ry="45" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3,3" />
+                  <ellipse cx="50" cy="52" rx="12" ry="4" fill="none" stroke="currentColor" strokeWidth="1" />
+                </svg>
+
+                <span className="absolute text-[10px] uppercase font-extrabold tracking-wider text-emerald-400 bg-slate-950/90 px-2 py-0.5 rounded-md border border-emerald-500/30">
                   Head Zone ({(activePreset.headHeightMinRatio * 100).toFixed(0)}-{(activePreset.headHeightMaxRatio * 100).toFixed(0)}%)
                 </span>
               </div>

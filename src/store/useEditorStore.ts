@@ -6,14 +6,49 @@ import {
   ComplianceCheck,
   ImageAdjustments,
   PrintSheetPreset,
+  AppSettings,
 } from '../types';
 import { ALL_PRESETS } from '../lib/presets/presetUtils';
 
 export type AppStep = 'upload' | 'preset' | 'editor' | 'compliance' | 'export';
 
+const DEFAULT_SETTINGS: AppSettings = {
+  defaultPaperFormat: '4x6',
+  autoCenterOnLoad: true,
+  guideOpacity: 0.75,
+  guideStyle: 'dashed',
+  targetKBLimitDefault: 240,
+  dpiQuality: 300,
+  showCutMarksDefault: true,
+  showPhotoBorderDefault: true,
+};
+
+const SETTINGS_STORAGE_KEY = 'printmint_user_settings';
+
+const loadSavedSettings = (): AppSettings => {
+  try {
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    return raw ? { ...DEFAULT_SETTINGS, ...JSON.parse(raw) } : DEFAULT_SETTINGS;
+  } catch (e) {
+    return DEFAULT_SETTINGS;
+  }
+};
+
 interface EditorState {
   currentStep: AppStep;
   setStep: (step: AppStep) => void;
+
+  // Sidebar & Settings Drawer
+  isSidebarCollapsed: boolean;
+  toggleSidebar: () => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
+  isSettingsModalOpen: boolean;
+  setSettingsModalOpen: (open: boolean) => void;
+
+  // User App Settings
+  appSettings: AppSettings;
+  updateAppSettings: (partial: Partial<AppSettings>) => void;
+  resetAppSettings: () => void;
 
   // Webcam Modal
   isWebcamModalOpen: boolean;
@@ -117,6 +152,28 @@ const loadSavedCustomPresets = (): PhotoPreset[] => {
 export const useEditorStore = create<EditorState>((set, get) => ({
   currentStep: 'upload',
   setStep: (step) => set({ currentStep: step }),
+
+  isSidebarCollapsed: false,
+  toggleSidebar: () => set((state) => ({ isSidebarCollapsed: !state.isSidebarCollapsed })),
+  setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
+
+  isSettingsModalOpen: false,
+  setSettingsModalOpen: (open) => set({ isSettingsModalOpen: open }),
+
+  appSettings: loadSavedSettings(),
+  updateAppSettings: (partial) => {
+    const updated = { ...get().appSettings, ...partial };
+    set({ appSettings: updated });
+    try {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(updated));
+    } catch (e) {}
+  },
+  resetAppSettings: () => {
+    set({ appSettings: DEFAULT_SETTINGS });
+    try {
+      localStorage.removeItem(SETTINGS_STORAGE_KEY);
+    } catch (e) {}
+  },
 
   isWebcamModalOpen: false,
   setWebcamModalOpen: (open) => set({ isWebcamModalOpen: open }),

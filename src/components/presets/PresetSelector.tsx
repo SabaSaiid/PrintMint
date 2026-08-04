@@ -183,24 +183,30 @@ export const PresetSelector: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPresets.map((preset) => {
           const isSelected = activePreset.id === preset.id;
+          const isPopular = preset.id === 'us_passport' || preset.id === 'india_passport' || preset.id === 'schengen_visa';
 
           return (
             <div
               key={preset.id}
               onClick={() => handleSelectPreset(preset)}
-              className={`relative cursor-pointer rounded-2xl p-5 border transition-all flex flex-col justify-between ${
+              className={`relative cursor-pointer rounded-2xl p-5 border transition-all duration-200 flex flex-col justify-between ${
                 isSelected
-                  ? 'bg-slate-900 border-emerald-400 ring-2 ring-emerald-500/20 shadow-xl shadow-emerald-500/10'
-                  : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                  ? 'bg-slate-900 border-emerald-400 ring-2 ring-emerald-500/20 shadow-xl shadow-emerald-500/15 scale-[1.01]'
+                  : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900 hover:shadow-lg'
               }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
                         <Globe className="w-3 h-3 text-emerald-400" /> {preset.country}
                       </span>
+                      {isPopular && (
+                        <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                          <Sparkles className="w-2.5 h-2.5" /> Popular
+                        </span>
+                      )}
                       {preset.isCustom && (
                         <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
                           Custom
@@ -211,42 +217,71 @@ export const PresetSelector: React.FC = () => {
                   </div>
 
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                      isSelected ? 'bg-emerald-400 text-slate-950' : 'border border-slate-700 text-transparent'
+                    className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                      isSelected ? 'bg-emerald-400 text-slate-950 shadow-md shadow-emerald-400/30' : 'border border-slate-700 text-transparent'
                     }`}
                   >
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                 </div>
 
-                {/* Dimension Badges */}
-                <div className="grid grid-cols-2 gap-2 my-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs">
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Photo Size</span>
-                    <span className="font-bold text-white">{preset.widthMm} x {preset.heightMm} mm</span>
+                {/* Visual Ratio Box & Dimension Badges */}
+                <div className="grid grid-cols-12 gap-3 my-3 p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 items-center">
+                  <div className="col-span-4 flex items-center justify-center bg-slate-900 p-2 rounded-lg border border-slate-800 h-16">
+                    <div
+                      className="border-2 border-emerald-400/80 bg-emerald-500/10 rounded flex items-center justify-center"
+                      style={{
+                        aspectRatio: `${preset.aspectRatio}`,
+                        maxHeight: '100%',
+                        maxWidth: '100%',
+                        height: preset.aspectRatio >= 1 ? 'auto' : '100%',
+                        width: preset.aspectRatio >= 1 ? '100%' : 'auto',
+                      }}
+                    >
+                      <span className="text-[8px] font-mono text-emerald-400 font-bold">
+                        {preset.widthMm}:{preset.heightMm}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Head Coverage</span>
-                    <span className="font-bold text-emerald-400">
-                      {(preset.headHeightMinRatio * 100).toFixed(0)} - {(preset.headHeightMaxRatio * 100).toFixed(0)}%
-                    </span>
+
+                  <div className="col-span-8 space-y-1.5 text-xs">
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Photo Size</span>
+                      <span className="font-bold text-white">{preset.widthMm} x {preset.heightMm} mm</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Head Coverage</span>
+                      <span className="font-bold text-emerald-400">
+                        {(preset.headHeightMinRatio * 100).toFixed(0)} - {(preset.headHeightMaxRatio * 100).toFixed(0)}%
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 <p className="text-xs text-slate-400 leading-relaxed mb-3">{preset.notes}</p>
               </div>
 
-              {preset.officialSourceUrl && (
-                <a
-                  href={preset.officialSourceUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] text-slate-400 hover:text-emerald-400 flex items-center gap-1 mt-2 pt-2 border-t border-slate-800/80"
-                >
-                  <ExternalLink className="w-3 h-3" /> Official Government Guidelines
-                </a>
-              )}
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/80">
+                {preset.officialSourceUrl ? (
+                  <a
+                    href={preset.officialSourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-[11px] text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition-colors"
+                  >
+                    <ExternalLink className="w-3 h-3" /> Official Guidelines
+                  </a>
+                ) : (
+                  <span className="text-[11px] text-slate-500">Government Standard</span>
+                )}
+
+                {isSelected && (
+                  <span className="text-[10px] font-extrabold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    Selected
+                  </span>
+                )}
+              </div>
             </div>
           );
         })}
