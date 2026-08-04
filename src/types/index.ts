@@ -135,6 +135,7 @@ export interface FamilyMemberRecord {
 }
 
 export interface AppSettings {
+  theme: 'dark' | 'light' | 'system';
   defaultPaperFormat: PaperFormat;
   autoCenterOnLoad: boolean;
   guideOpacity: number; // 0.1 to 1.0
@@ -144,5 +145,6 @@ export interface AppSettings {
   showCutMarksDefault: boolean;
   showPhotoBorderDefault: boolean;
 }
+
 
 

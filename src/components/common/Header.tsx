@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useEditorStore, AppStep } from '../../store/useEditorStore';
 import { ALL_PRESETS } from '../../lib/presets/presetUtils';
 import { calculateAutoCrop } from '../../lib/face/measureHead';
-import { Sparkles, RefreshCw, ShieldCheck, Download, Crop, Image as ImageIcon, ChevronDown, Check, CheckCircle2, AlertTriangle, X, Settings, Menu } from 'lucide-react';
+import { Sparkles, RefreshCw, ShieldCheck, Download, Crop, Image as ImageIcon, ChevronDown, Check, CheckCircle2, AlertTriangle, X, Settings, Menu, Sun, Moon } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const {
@@ -17,11 +17,18 @@ export const Header: React.FC = () => {
     resetAll,
     setSettingsModalOpen,
     toggleSidebar,
+    appSettings,
+    updateAppSettings,
   } = useEditorStore();
 
   const [isPresetDropdownOpen, setIsPresetDropdownOpen] = useState(false);
 
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  const toggleTheme = () => {
+    const nextTheme = appSettings.theme === 'dark' ? 'light' : 'dark';
+    updateAppSettings({ theme: nextTheme });
+  };
 
   const steps: Array<{ id: AppStep; label: string; icon: React.ComponentType<{ className?: string }> }> = [
     { id: 'upload', label: 'Upload', icon: ImageIcon },
@@ -56,7 +63,7 @@ export const Header: React.FC = () => {
   const currentStepIdx = steps.findIndex((s) => s.id === currentStep);
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 px-4 lg:px-8 py-3 transition-all">
+    <header className="sticky top-0 z-50 bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 px-4 lg:px-8 py-3 transition-all">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Brand */}
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
@@ -64,9 +71,9 @@ export const Header: React.FC = () => {
             <button
               onClick={toggleSidebar}
               title="Toggle Sidebar"
-              className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
             >
-              <Menu className="w-4 h-4 text-emerald-400" />
+              <Menu className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
             </button>
 
             <div onClick={() => imageFile ? setShowResetConfirm(true) : resetAll()} className="flex items-center gap-2.5 cursor-pointer group">
@@ -75,33 +82,45 @@ export const Header: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-xl tracking-tight text-white">
-                    Print<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Mint</span>
+                  <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
+                    Print<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400 dark:from-emerald-400 dark:to-teal-300">Mint</span>
                   </span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full shadow-sm">
+                  <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full shadow-sm">
                     WASM 100% Client-Side
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 hidden sm:block">Passport Photo Compliance Assistant</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Passport Photo Compliance Assistant</p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
+              onClick={toggleTheme}
+              title={`Switch to ${appSettings.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
+            >
+              {appSettings.theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-500" />
+              )}
+            </button>
+
+            <button
               onClick={() => setSettingsModalOpen(true)}
               title="Settings & Preferences"
-              className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
             >
-              <Settings className="w-4 h-4 text-emerald-400" />
+              <Settings className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
             </button>
 
             {imageFile && (
               <button
                 onClick={() => setShowResetConfirm(true)}
-                className="text-xs text-slate-400 hover:text-slate-100 flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 px-3 py-1.5 rounded-xl transition-all"
+                className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl transition-all"
               >
-                <RefreshCw className="w-3.5 h-3.5 text-emerald-400" /> Start Over
+                <RefreshCw className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Start Over
               </button>
             )}
           </div>
@@ -109,7 +128,7 @@ export const Header: React.FC = () => {
 
         {/* Step Indicator with Visual Progress Connector */}
         {imageFile && (
-          <nav className="flex items-center bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800/90 shadow-inner overflow-x-auto max-w-full">
+          <nav className="flex items-center bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800/90 shadow-inner overflow-x-auto max-w-full">
             {steps.map((step, idx) => {
               const Icon = step.icon;
               const isActive = currentStep === step.id;
@@ -120,7 +139,7 @@ export const Header: React.FC = () => {
                   {idx > 0 && (
                     <div
                       className={`h-0.5 w-3 sm:w-6 transition-colors mx-0.5 ${
-                        isPast ? 'bg-emerald-500/60' : 'bg-slate-800'
+                        isPast ? 'bg-emerald-500/60' : 'bg-slate-300 dark:bg-slate-800'
                       }`}
                     />
                   )}
@@ -130,12 +149,12 @@ export const Header: React.FC = () => {
                       isActive
                         ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
                         : isPast
-                        ? 'text-emerald-400 hover:bg-slate-800/80'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                        ? 'text-emerald-600 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-800/80'
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800/50'
                     }`}
                   >
                     {isPast ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                     ) : (
                       <Icon className="w-3.5 h-3.5" />
                     )}

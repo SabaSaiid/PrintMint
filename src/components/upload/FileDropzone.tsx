@@ -239,14 +239,14 @@ export const FileDropzone: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
       {/* Hero Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold mb-4 shadow-lg shadow-emerald-500/10">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold mb-4 shadow-lg shadow-emerald-500/10">
           <Lock className="w-3.5 h-3.5" /> 100% In-Browser WASM • Zero Upload Security Guarantee
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-          Passport & ID Photo <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">Compliance Assistant</span>
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+          Passport & ID Photo <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400">Compliance Assistant</span>
         </h1>
-        <p className="mt-3 text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
           Auto-centers face position, levels eye alignment, checks lighting & blur quality, and generates printable 300 DPI layout sheets.
         </p>
       </div>
@@ -259,10 +259,10 @@ export const FileDropzone: React.FC = () => {
         }}
         onDragLeave={() => setIsHovered(false)}
         onDrop={handleDrop}
-        className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all duration-300 bg-slate-900/60 backdrop-blur-xl ${
+        className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all duration-300 bg-white dark:bg-slate-900/60 backdrop-blur-xl shadow-xl ${
           isHovered
-            ? 'border-emerald-400 bg-emerald-500/10 scale-[1.01] shadow-2xl shadow-emerald-500/20'
-            : 'border-slate-800 hover:border-slate-700 hover:bg-slate-900/80'
+            ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-500/10 scale-[1.01] shadow-2xl shadow-emerald-500/20'
+            : 'border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900/80'
         }`}
       >
         <input
@@ -285,24 +285,24 @@ export const FileDropzone: React.FC = () => {
           <div className="py-12 flex flex-col items-center justify-center space-y-4">
             <div className="relative w-20 h-20">
               <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-pulse" />
-              <div className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin" />
-              <Cpu className="w-8 h-8 text-emerald-400 absolute inset-0 m-auto animate-pulse" />
+              <div className="absolute inset-0 rounded-full border-4 border-emerald-500 dark:border-emerald-400 border-t-transparent animate-spin" />
+              <Cpu className="w-8 h-8 text-emerald-500 dark:text-emerald-400 absolute inset-0 m-auto animate-pulse" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Analyzing Facial Landmarks...</h3>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Analyzing Facial Landmarks...</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
                 Running MediaPipe 478 3D landmark engine & evaluating lighting, blur, and tilt compliance...
               </p>
             </div>
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-800 via-slate-900 to-slate-950 border border-slate-700/80 flex items-center justify-center mb-5 text-emerald-400 shadow-2xl shadow-slate-950/80 group">
-              <Upload className="w-8 h-8 stroke-[1.75] group-hover:scale-110 transition-transform text-emerald-400" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-100 via-slate-200 to-slate-300 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950 border border-slate-300 dark:border-slate-700/80 flex items-center justify-center mb-5 text-emerald-500 dark:text-emerald-400 shadow-xl group">
+              <Upload className="w-8 h-8 stroke-[1.75] group-hover:scale-110 transition-transform text-emerald-600 dark:text-emerald-400" />
             </div>
 
-            <h3 className="text-xl font-bold text-white">Drag and drop your photo here</h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-sm">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Drag and drop your photo here</h3>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
               Supports JPEG, PNG, WEBP, and iPhone HEIC photos.
             </p>
 
@@ -317,37 +317,37 @@ export const FileDropzone: React.FC = () => {
 
               <button
                 onClick={() => useEditorStore.getState().setWebcamModalOpen(true)}
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 shadow-md transition-all hover:border-emerald-500/50 cursor-pointer"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-sm border border-slate-300 dark:border-slate-700 shadow-md transition-all hover:border-emerald-500/50 cursor-pointer"
               >
-                <Camera className="w-4 h-4 text-emerald-400" /> Live Webcam Studio
+                <Camera className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Live Webcam Studio
               </button>
             </div>
 
             {/* 3 Sample Test Photo Buttons */}
-            <div className="mt-8 pt-6 border-t border-slate-800/80 w-full max-w-lg">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800/80 w-full max-w-lg">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-3">
                 Try Sample Test Cases
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <button
                   onClick={() => handleLoadSample('standard')}
-                  className="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-all hover:border-emerald-500/40"
+                  className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700/80 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition-all hover:border-emerald-500/40"
                 >
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Standard
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Standard
                 </button>
 
                 <button
                   onClick={() => handleLoadSample('tilted')}
-                  className="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-all hover:border-amber-500/40"
+                  className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700/80 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition-all hover:border-amber-500/40"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Tilted Pose
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> Tilted Pose
                 </button>
 
                 <button
                   onClick={() => handleLoadSample('dark')}
-                  className="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-all hover:border-cyan-500/40"
+                  className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700/80 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition-all hover:border-cyan-500/40"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> Dark Lighting
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" /> Dark Lighting
                 </button>
               </div>
             </div>
@@ -355,7 +355,7 @@ export const FileDropzone: React.FC = () => {
         )}
 
         {errorMsg && (
-          <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs flex items-center justify-center gap-2">
+          <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-300 text-xs flex items-center justify-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" /> {errorMsg}
           </div>
         )}
@@ -363,29 +363,29 @@ export const FileDropzone: React.FC = () => {
 
       {/* Photo Quality Guidelines Quick Reference */}
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 text-xs space-y-1">
-          <div className="font-bold text-white flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Neutral Expression
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 text-xs space-y-1 shadow-sm">
+          <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Neutral Expression
           </div>
-          <p className="text-slate-400 leading-relaxed text-[11px]">
+          <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[11px]">
             Keep eyes open, mouth closed, looking straight at the camera lens without smiling.
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 text-xs space-y-1">
-          <div className="font-bold text-white flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Even Lighting
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 text-xs space-y-1 shadow-sm">
+          <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Even Lighting
           </div>
-          <p className="text-slate-400 leading-relaxed text-[11px]">
+          <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[11px]">
             Avoid harsh shadows across face, flash glares on forehead, or extreme backlighting.
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 text-xs space-y-1">
-          <div className="font-bold text-white flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Plain Background
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 text-xs space-y-1 shadow-sm">
+          <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Plain Background
           </div>
-          <p className="text-slate-400 leading-relaxed text-[11px]">
+          <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[11px]">
             Use a light plain wall or opt for our 1-click background whitening tool.
           </p>
         </div>

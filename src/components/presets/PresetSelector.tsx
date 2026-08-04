@@ -93,11 +93,11 @@ export const PresetSelector: React.FC = () => {
       {/* Top Title & Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1">
             <ShieldCheck className="w-4 h-4" /> Country & Document Specification
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Select Passport / ID Standard</h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Select Passport / ID Standard</h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
             Official government parameters for photo dimensions, head height ratios, and background colors.
           </p>
         </div>
@@ -105,25 +105,18 @@ export const PresetSelector: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsCustomModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold text-xs transition-all shadow-sm cursor-pointer"
           >
-            <Plus className="w-4 h-4 text-emerald-400" /> Create Custom Spec
-          </button>
-
-          <button
-            onClick={() => setStep('editor')}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all"
-          >
-            Continue to Editor <ArrowRight className="w-4 h-4" />
+            <Plus className="w-4 h-4" /> Create Custom Spec
           </button>
         </div>
       </div>
 
       {/* Warning Callout */}
-      <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs flex items-start gap-3">
-        <Info className="w-5 h-5 flex-shrink-0 text-amber-400 mt-0.5" />
+      <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-200 text-xs flex items-start gap-3">
+        <Info className="w-5 h-5 flex-shrink-0 text-amber-500 dark:text-amber-400 mt-0.5" />
         <div>
-          <span className="font-bold text-amber-300">Important Compliance Reminder: </span>
+          <span className="font-bold text-amber-700 dark:text-amber-300">Important Compliance Reminder: </span>
           Specifications update periodically (e.g. India updated passport photos to 35x45mm in Sept 2025). Always verify rules with official government issuing authorities.
         </div>
       </div>
@@ -138,16 +131,16 @@ export const PresetSelector: React.FC = () => {
             placeholder="Search country or spec (e.g. India, US, UK)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 text-xs focus:outline-none focus:border-emerald-500/50"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-emerald-500/50 shadow-sm"
           />
         </div>
 
         {/* Filter Category Tabs */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-xl w-full md:w-auto overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl w-full md:w-auto overflow-x-auto">
           <button
             onClick={() => setSelectedCategory('all')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              selectedCategory === 'all' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              selectedCategory === 'all' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             All Specs ({combinedPresets.length})
@@ -155,7 +148,7 @@ export const PresetSelector: React.FC = () => {
           <button
             onClick={() => setSelectedCategory('passport')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              selectedCategory === 'passport' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              selectedCategory === 'passport' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Passports
@@ -163,7 +156,7 @@ export const PresetSelector: React.FC = () => {
           <button
             onClick={() => setSelectedCategory('visa')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              selectedCategory === 'visa' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              selectedCategory === 'visa' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Visas & OCI
@@ -171,7 +164,7 @@ export const PresetSelector: React.FC = () => {
           <button
             onClick={() => setSelectedCategory('custom')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              selectedCategory === 'custom' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              selectedCategory === 'custom' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Custom ({customPresets.length + 1})
@@ -189,31 +182,31 @@ export const PresetSelector: React.FC = () => {
             <div
               key={preset.id}
               onClick={() => handleSelectPreset(preset)}
-              className={`relative cursor-pointer rounded-2xl p-5 border transition-all duration-200 flex flex-col justify-between ${
+              className={`relative cursor-pointer rounded-2xl p-5 border transition-all duration-200 flex flex-col justify-between shadow-sm ${
                 isSelected
-                  ? 'bg-slate-900 border-emerald-400 ring-2 ring-emerald-500/20 shadow-xl shadow-emerald-500/15 scale-[1.01]'
-                  : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900 hover:shadow-lg'
+                  ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/20 shadow-xl shadow-emerald-500/15 scale-[1.01]'
+                  : 'bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900 hover:shadow-md'
               }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-                        <Globe className="w-3 h-3 text-emerald-400" /> {preset.country}
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                        <Globe className="w-3 h-3 text-emerald-500 dark:text-emerald-400" /> {preset.country}
                       </span>
                       {isPopular && (
-                        <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                        <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1">
                           <Sparkles className="w-2.5 h-2.5" /> Popular
                         </span>
                       )}
                       {preset.isCustom && (
-                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30">
                           Custom
                         </span>
                       )}
                     </div>
-                    <h3 className="font-extrabold text-white text-base mt-2">{preset.name}</h3>
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base mt-2">{preset.name}</h3>
                   </div>
 
                   <div

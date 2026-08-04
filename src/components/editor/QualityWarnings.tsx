@@ -44,15 +44,20 @@ export const QualityWarnings: React.FC = () => {
     : complianceChecks;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-2xl">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 space-y-4 shadow-xl">
       {/* Header & Score Progress */}
-      <div className="pb-3 border-b border-slate-800 space-y-3">
+      <div className="pb-3 border-b border-slate-200 dark:border-slate-800 space-y-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-xs font-extrabold text-emerald-400 uppercase tracking-wider">
-            <ShieldCheck className="w-4 h-4" /> Compliance Audit Score
-          </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-extrabold font-mono text-emerald-400">{passPercentage}%</span>
+            <ShieldCheck className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
+            <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Compliance Audit</h3>
+          </div>
+
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-mono font-bold">
+            <span className="text-slate-500 dark:text-slate-400">Score:</span>
+            <span className={passPercentage >= 90 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}>
+              {passPercentage}%
+            </span>
           </div>
         </div>
 

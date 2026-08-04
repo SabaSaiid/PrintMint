@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Cropper from 'react-easy-crop';
 import { useEditorStore } from '../../store/useEditorStore';
-import { RotateCw, ZoomIn, Target, RefreshCw, Compass, ShieldCheck, Eye, X } from 'lucide-react';
+import { RotateCw, ZoomIn, Target, RefreshCw, Compass, ShieldCheck, Eye, X, Maximize2 } from 'lucide-react';
 import { calculateAutoCrop } from '../../lib/face/measureHead';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { whitenBackground } from '../../lib/background/whiten';
@@ -96,28 +96,32 @@ export const CropCanvas: React.FC = () => {
   const tiltAngle = faceResult?.hasFace ? faceResult.tiltAngleDeg.toFixed(1) : '0.0';
 
   return (
-    <div className="flex flex-col h-full bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 text-xs">
+    <div className="relative rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden flex flex-col">
+      {/* Top Canvas Controls Bar */}
+      <div className="px-4 py-3 bg-slate-100 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-xs">
         <div className="flex items-center gap-2">
-          <span className="font-extrabold text-white">{activePreset.name}</span>
-          <span className="text-slate-400 text-[11px] font-mono">({activePreset.widthMm} x {activePreset.heightMm} mm)</span>
+          <span className="font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <Maximize2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Interactive Crop Box
+          </span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-950 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800">
+            {activePreset.widthMm} × {activePreset.heightMm} mm
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowBeforeAfterModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 border border-amber-500/30 transition-all cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" /> Compare Before/After
           </button>
 
           <button
             onClick={() => setShowGuides(!showGuides)}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
               showGuides
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                : 'bg-slate-800 text-slate-400 border-slate-700'
+                ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30'
+                : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700'
             }`}
           >
             <Target className="w-3.5 h-3.5" /> {showGuides ? 'Guides On' : 'Guides Off'}
@@ -126,9 +130,9 @@ export const CropCanvas: React.FC = () => {
           {faceResult?.hasFace && (
             <button
               onClick={handleAutoCenterFace}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition-all cursor-pointer"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-emerald-400" /> Auto-Center
+              <RefreshCw className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Auto-Center
             </button>
           )}
         </div>

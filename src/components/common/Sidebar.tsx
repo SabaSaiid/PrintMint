@@ -18,6 +18,8 @@ import {
   CheckCircle2,
   X,
   BookOpen,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { FamilyBatchModal } from '../export/FamilyBatchModal';
 
@@ -31,7 +33,10 @@ export const Sidebar: React.FC = () => {
     toggleSidebar,
     setSettingsModalOpen,
     setWebcamModalOpen,
+    appSettings,
+    updateAppSettings,
   } = useEditorStore();
+
 
   const [isFamilyBatchOpen, setIsFamilyBatchOpen] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
@@ -47,21 +52,21 @@ export const Sidebar: React.FC = () => {
   return (
     <>
       <aside
-        className={`fixed left-0 top-16 bottom-0 z-40 bg-slate-950/95 backdrop-blur-2xl border-r border-slate-800/80 transition-all duration-300 flex flex-col justify-between select-none ${
+        className={`fixed left-0 top-16 bottom-0 z-40 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-r border-slate-200 dark:border-slate-800/80 transition-all duration-300 flex flex-col justify-between select-none ${
           isSidebarCollapsed ? 'w-16' : 'w-64'
         }`}
       >
         {/* Top Collapse Toggle Header */}
-        <div className="p-3 border-b border-slate-800/80 flex items-center justify-between">
+        <div className="p-3 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
           {!isSidebarCollapsed && (
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Workflow Navigation
             </span>
           )}
           <button
             onClick={toggleSidebar}
             title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-            className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all mx-auto"
+            className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all mx-auto"
           >
             {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
@@ -83,13 +88,13 @@ export const Sidebar: React.FC = () => {
                   isActive
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-lg shadow-emerald-500/25 scale-[1.01]'
                     : isCompleted
-                    ? 'text-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-transparent'
+                    ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent'
                 }`}
               >
                 <div className="flex-shrink-0">
                   {isCompleted ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                   ) : (
                     <Icon className="w-4 h-4" />
                   )}
@@ -101,15 +106,15 @@ export const Sidebar: React.FC = () => {
 
           {/* Quick Specification Indicator */}
           {!isSidebarCollapsed && (
-            <div className="mt-4 p-3 rounded-2xl bg-slate-900/80 border border-slate-800/80 text-xs">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+            <div className="mt-4 p-3 rounded-2xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 text-xs">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">
                 Active Specification
               </span>
               <div className="flex items-center justify-between">
-                <span className="font-bold text-emerald-400 truncate flex items-center gap-1">
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 truncate flex items-center gap-1">
                   <Globe className="w-3 h-3 flex-shrink-0" /> {activePreset.name}
                 </span>
-                <span className="text-[10px] font-mono text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">
+                <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-950 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800">
                   {activePreset.widthMm}x{activePreset.heightMm}
                 </span>
               </div>
@@ -117,9 +122,9 @@ export const Sidebar: React.FC = () => {
           )}
 
           {/* Quick Tools & Utilities */}
-          <div className="pt-4 border-t border-slate-800/80 space-y-1">
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-1">
             {!isSidebarCollapsed && (
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 block mb-1">
                 Studio Tools
               </span>
             )}
@@ -127,40 +132,55 @@ export const Sidebar: React.FC = () => {
             <button
               onClick={() => setWebcamModalOpen(true)}
               title="Live Webcam Studio"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 border border-transparent transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all"
             >
-              <Camera className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <Camera className="w-4 h-4 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
               {!isSidebarCollapsed && <span>Live Webcam Studio</span>}
             </button>
 
             <button
               onClick={() => setIsFamilyBatchOpen(true)}
               title="Family Batch Print Sheet"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 border border-transparent transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all"
             >
-              <Users className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+              <Users className="w-4 h-4 text-cyan-500 dark:text-cyan-400 flex-shrink-0" />
               {!isSidebarCollapsed && <span>Family Batch Sheet</span>}
+            </button>
+
+            <button
+              onClick={() => updateAppSettings({ theme: appSettings.theme === 'dark' ? 'light' : 'dark' })}
+              title={`Switch to ${appSettings.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all cursor-pointer"
+            >
+              {appSettings.theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+              )}
+              {!isSidebarCollapsed && (
+                <span>{appSettings.theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              )}
             </button>
 
             <button
               onClick={() => setIsHelpModalOpen(true)}
               title="Photo Guidelines & Rules"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 border border-transparent transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all"
             >
-              <BookOpen className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <BookOpen className="w-4 h-4 text-amber-500 dark:text-amber-400 flex-shrink-0" />
               {!isSidebarCollapsed && <span>Official Photo Rules</span>}
             </button>
           </div>
         </div>
 
         {/* Sidebar Footer: Settings & WASM Guarantee */}
-        <div className="p-3 border-t border-slate-800/80 space-y-2">
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800/80 space-y-2">
           <button
             onClick={() => setSettingsModalOpen(true)}
             title="Settings & Preferences"
-            className="w-full flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs shadow-md transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs shadow-md transition-all cursor-pointer"
           >
-            <Settings className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            <Settings className="w-4 h-4 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
             {!isSidebarCollapsed && <span>Settings & Preferences</span>}
           </button>
 

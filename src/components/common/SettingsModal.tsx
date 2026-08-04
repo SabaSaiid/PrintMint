@@ -115,6 +115,29 @@ export const SettingsModal: React.FC = () => {
         {/* Tab 1: General Defaults */}
         {activeTab === 'general' && (
           <div className="space-y-4 text-xs">
+            {/* Color Theme Preference */}
+            <div className="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 space-y-2">
+              <label className="font-bold text-white block">Application Color Theme</label>
+              <div className="grid grid-cols-3 gap-2">
+                {(['dark', 'light', 'system'] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => {
+                      updateAppSettings({ theme: t });
+                      notify(`Theme set to ${t}`);
+                    }}
+                    className={`py-2.5 rounded-xl text-xs font-bold capitalize border transition-all ${
+                      appSettings.theme === t
+                        ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-md'
+                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    {t === 'dark' ? '🌙 Dark' : t === 'light' ? '☀️ Light' : '💻 System'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 space-y-2">
               <label className="font-bold text-white block">Default Paper Format</label>
               <div className="grid grid-cols-4 gap-2">

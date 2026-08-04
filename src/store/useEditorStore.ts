@@ -13,6 +13,7 @@ import { ALL_PRESETS } from '../lib/presets/presetUtils';
 export type AppStep = 'upload' | 'preset' | 'editor' | 'compliance' | 'export';
 
 const DEFAULT_SETTINGS: AppSettings = {
+  theme: 'dark',
   defaultPaperFormat: '4x6',
   autoCenterOnLoad: true,
   guideOpacity: 0.75,
@@ -25,14 +26,33 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 const SETTINGS_STORAGE_KEY = 'printmint_user_settings';
 
+export const applyThemeToDOM = (theme: 'dark' | 'light' | 'system') => {
+  if (typeof window === 'undefined') return;
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+};
+
 const loadSavedSettings = (): AppSettings => {
   try {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
-    return raw ? { ...DEFAULT_SETTINGS, ...JSON.parse(raw) } : DEFAULT_SETTINGS;
+    const loaded = raw ? { ...DEFAULT_SETTINGS, ...JSON.parse(raw) } : DEFAULT_SETTINGS;
+    applyThemeToDOM(loaded.theme);
+    return loaded;
   } catch (e) {
+    applyThemeToDOM(DEFAULT_SETTINGS.theme);
     return DEFAULT_SETTINGS;
   }
 };
+
 
 interface EditorState {
   currentStep: AppStep;
@@ -164,12 +184,14 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   updateAppSettings: (partial) => {
     const updated = { ...get().appSettings, ...partial };
     set({ appSettings: updated });
+    applyThemeToDOM(updated.theme);
     try {
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(updated));
     } catch (e) {}
   },
   resetAppSettings: () => {
     set({ appSettings: DEFAULT_SETTINGS });
+    applyThemeToDOM(DEFAULT_SETTINGS.theme);
     try {
       localStorage.removeItem(SETTINGS_STORAGE_KEY);
     } catch (e) {}
