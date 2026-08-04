@@ -7,7 +7,8 @@
     color-scheme: light dark;
   }
 
-  body {
+  html, body {
+    min-height: 100%;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     background-color: #f8fafc;
@@ -15,7 +16,7 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  html.dark body, body.dark {
+  html.dark, html.dark body, body.dark {
     background-color: #020617;
     color: #f8fafc;
   }
