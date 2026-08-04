@@ -117,16 +117,16 @@ export const WebcamCaptureModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="flex items-center gap-2">
-            <Camera className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-bold text-white text-base">Live Camera Passport Studio</h3>
+            <Camera className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
+            <h3 className="font-bold text-slate-900 dark:text-white text-base">Live Camera Passport Studio</h3>
           </div>
           <button
             onClick={handleClose}
-            className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition"
+            className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>

@@ -86,45 +86,45 @@ export const FamilyBatchModal: React.FC<FamilyBatchModalProps> = ({ isOpen, onCl
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-      <div className="w-full max-w-3xl bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+      <div className="w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-extrabold text-white text-base">Family Batch Print Sheet Composer</h3>
+            <Users className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
+            <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Family Batch Print Sheet Composer</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-full hover:bg-slate-800"
+            className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-600 dark:text-slate-400">
           Mix multiple family members on a single 4x6" print sheet to save printing costs at Walgreens or CVS.
         </p>
 
         {/* Input Controls */}
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-4 bg-slate-950 rounded-2xl border border-slate-800 items-end">
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-4 bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 items-end">
           <div className="sm:col-span-5">
-            <label className="block text-[11px] font-bold text-slate-300 mb-1">Member Name</label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Member Name</label>
             <input
               type="text"
               value={memberNameInput}
               onChange={(e) => setMemberNameInput(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs"
+              className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs"
             />
           </div>
 
           <div className="sm:col-span-3">
-            <label className="block text-[11px] font-bold text-slate-300 mb-1">Photo Copies</label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Photo Copies</label>
             <input
               type="number"
               min="1"
               max="6"
               value={memberCopiesInput}
               onChange={(e) => setMemberCopiesInput(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs"
+              className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs"
             />
           </div>
 

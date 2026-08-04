@@ -62,11 +62,11 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
 
   return (
     <div className="w-full flex flex-col items-center select-none">
-      <div className="flex items-center justify-between w-full mb-2 text-xs font-bold text-slate-400 px-1">
-        <span className="flex items-center gap-1 text-slate-300">
-          <Eye className="w-3.5 h-3.5 text-amber-400" /> BEFORE (RAW)
+      <div className="flex items-center justify-between w-full mb-2 text-xs font-bold text-slate-500 dark:text-slate-400 px-1">
+        <span className="flex items-center gap-1 text-slate-800 dark:text-slate-300">
+          <Eye className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> BEFORE (RAW)
         </span>
-        <span className="text-emerald-400">AFTER (PROCESSED)</span>
+        <span className="text-emerald-600 dark:text-emerald-400">AFTER (PROCESSED)</span>
       </div>
 
       <div
