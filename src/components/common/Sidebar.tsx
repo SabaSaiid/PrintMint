@@ -56,20 +56,17 @@ export const Sidebar: React.FC = () => {
           isSidebarCollapsed ? 'w-16' : 'w-64'
         }`}
       >
-        {/* Top Collapse Toggle Header */}
-        <div className="p-3 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
-          {!isSidebarCollapsed && (
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        {/* Top Header */}
+        <div className="px-3 py-3 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
+          {!isSidebarCollapsed ? (
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-1">
               Workflow Navigation
             </span>
+          ) : (
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mx-auto">
+              Menu
+            </span>
           )}
-          <button
-            onClick={toggleSidebar}
-            title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-            className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all mx-auto"
-          >
-            {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
         </div>
 
         {/* Workflow Steps Navigation */}
@@ -84,7 +81,7 @@ export const Sidebar: React.FC = () => {
                 key={step.id}
                 onClick={() => setStep(step.id)}
                 title={step.label}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-lg shadow-emerald-500/25 scale-[1.01]'
                     : isCompleted
@@ -132,7 +129,7 @@ export const Sidebar: React.FC = () => {
             <button
               onClick={() => setWebcamModalOpen(true)}
               title="Live Webcam Studio"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all cursor-pointer"
             >
               <Camera className="w-4 h-4 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
               {!isSidebarCollapsed && <span>Live Webcam Studio</span>}
@@ -141,31 +138,16 @@ export const Sidebar: React.FC = () => {
             <button
               onClick={() => setIsFamilyBatchOpen(true)}
               title="Family Batch Print Sheet"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all cursor-pointer"
             >
               <Users className="w-4 h-4 text-cyan-500 dark:text-cyan-400 flex-shrink-0" />
               {!isSidebarCollapsed && <span>Family Batch Sheet</span>}
             </button>
 
             <button
-              onClick={() => updateAppSettings({ theme: appSettings.theme === 'dark' ? 'light' : 'dark' })}
-              title={`Switch to ${appSettings.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all cursor-pointer"
-            >
-              {appSettings.theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-              )}
-              {!isSidebarCollapsed && (
-                <span>{appSettings.theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-              )}
-            </button>
-
-            <button
               onClick={() => setIsHelpModalOpen(true)}
               title="Photo Guidelines & Rules"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent transition-all cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-amber-500 dark:text-amber-400 flex-shrink-0" />
               {!isSidebarCollapsed && <span>Official Photo Rules</span>}

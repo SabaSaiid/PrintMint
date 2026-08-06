@@ -17,6 +17,7 @@ export const Header: React.FC = () => {
     resetAll,
     setSettingsModalOpen,
     toggleSidebar,
+    isSidebarCollapsed,
     appSettings,
     updateAppSettings,
   } = useEditorStore();
@@ -63,119 +64,91 @@ export const Header: React.FC = () => {
   const currentStepIdx = steps.findIndex((s) => s.id === currentStep);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 px-4 lg:px-8 py-3 transition-all">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Brand */}
-        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleSidebar}
-              title="Toggle Sidebar"
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
-            >
-              <Menu className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-            </button>
+    <header className="sticky top-0 z-50 h-16 w-full bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 px-4 flex items-center justify-between transition-all select-none">
+      {/* Left Area: Sidebar Toggle & Brand */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={toggleSidebar}
+          title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+        >
+          <Menu className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+        </button>
 
-            <div onClick={() => imageFile ? setShowResetConfirm(true) : resetAll()} className="flex items-center gap-2.5 cursor-pointer group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-all">
-                <Sparkles className="w-5 h-5 text-slate-950 stroke-[2.5]" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
-                    Print<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400 dark:from-emerald-400 dark:to-teal-300">Mint</span>
-                  </span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full shadow-sm">
-                    WASM 100% Client-Side
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Passport Photo Compliance Assistant</p>
-              </div>
-            </div>
+        <div
+          onClick={() => (imageFile ? setShowResetConfirm(true) : resetAll())}
+          className="flex items-center gap-2.5 cursor-pointer group"
+        >
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-all">
+            <Sparkles className="w-5 h-5 text-slate-950 stroke-[2.5]" />
           </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              title={`Switch to ${appSettings.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
-            >
-              {appSettings.theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-500" />
-              )}
-            </button>
-
-            <button
-              onClick={() => setSettingsModalOpen(true)}
-              title="Settings & Preferences"
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
-            >
-              <Settings className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-            </button>
-
-            {imageFile && (
-              <button
-                onClick={() => setShowResetConfirm(true)}
-                className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl transition-all"
-              >
-                <RefreshCw className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Start Over
-              </button>
-            )}
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white">
+                Print<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400 dark:from-emerald-400 dark:to-teal-300">Mint</span>
+              </span>
+              <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full shadow-sm hidden sm:inline-block">
+                WASM 100% Client-Side
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden lg:block -mt-0.5">
+              Passport Photo Compliance Assistant
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Step Indicator with Visual Progress Connector */}
-        {imageFile && (
-          <nav className="flex items-center bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800/90 shadow-inner overflow-x-auto max-w-full">
-            {steps.map((step, idx) => {
-              const Icon = step.icon;
-              const isActive = currentStep === step.id;
-              const isPast = currentStepIdx > idx;
+      {/* Center Area: Workflow Progress Wizard */}
+      {imageFile && (
+        <nav className="hidden md:flex items-center bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800/90 shadow-inner max-w-full">
+          {steps.map((step, idx) => {
+            const Icon = step.icon;
+            const isActive = currentStep === step.id;
+            const isPast = currentStepIdx > idx;
 
-              return (
-                <React.Fragment key={step.id}>
-                  {idx > 0 && (
-                    <div
-                      className={`h-0.5 w-3 sm:w-6 transition-colors mx-0.5 ${
-                        isPast ? 'bg-emerald-500/60' : 'bg-slate-300 dark:bg-slate-800'
-                      }`}
-                    />
-                  )}
-                  <button
-                    onClick={() => setStep(step.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                      isActive
-                        ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
-                        : isPast
-                        ? 'text-emerald-600 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-800/80'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800/50'
+            return (
+              <React.Fragment key={step.id}>
+                {idx > 0 && (
+                  <div
+                    className={`h-0.5 w-3 lg:w-5 transition-colors mx-0.5 ${
+                      isPast ? 'bg-emerald-500/60' : 'bg-slate-300 dark:bg-slate-800'
                     }`}
-                  >
-                    {isPast ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
-                    ) : (
-                      <Icon className="w-3.5 h-3.5" />
-                    )}
-                    <span>{step.label}</span>
-                  </button>
-                </React.Fragment>
-              );
-            })}
-          </nav>
-        )}
+                  />
+                )}
+                <button
+                  onClick={() => setStep(step.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
+                      : isPast
+                      ? 'text-emerald-600 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-800/80'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800/50'
+                  }`}
+                >
+                  {isPast ? (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                  ) : (
+                    <Icon className="w-3.5 h-3.5" />
+                  )}
+                  <span>{step.label}</span>
+                </button>
+              </React.Fragment>
+            );
+          })}
+        </nav>
+      )}
 
-        {/* Active Preset Quick Switcher */}
+      {/* Right Area: Spec Quick Switch, Theme Toggle & Start Over */}
+      <div className="flex items-center gap-2">
         {imageFile && (
-          <div className="relative hidden lg:block">
+          <div className="relative hidden xl:block">
             <button
               onClick={() => setIsPresetDropdownOpen(!isPresetDropdownOpen)}
-              className="flex items-center gap-2 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 px-3.5 py-1.5 rounded-xl text-left transition-all shadow-sm"
+              className="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl text-left transition-all shadow-sm cursor-pointer"
             >
               <div>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Target Spec</span>
-                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block">Target Spec</span>
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   {activePreset.name} ({activePreset.widthMm}x{activePreset.heightMm}mm)
                 </span>
               </div>
@@ -196,12 +169,16 @@ export const Header: React.FC = () => {
                         key={preset.id}
                         onClick={() => handleQuickPresetChange(preset.id)}
                         className={`w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
-                          isSelected ? 'bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20' : 'text-slate-300 hover:bg-slate-800'
+                          isSelected
+                            ? 'bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20'
+                            : 'text-slate-300 hover:bg-slate-800'
                         }`}
                       >
                         <div>
                           <div className="font-semibold">{preset.name}</div>
-                          <div className="text-[10px] text-slate-400">{preset.widthMm}x{preset.heightMm} mm • {preset.country}</div>
+                          <div className="text-[10px] text-slate-400">
+                            {preset.widthMm}x{preset.heightMm} mm • {preset.country}
+                          </div>
                         </div>
                         {isSelected && <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />}
                       </button>
@@ -211,6 +188,27 @@ export const Header: React.FC = () => {
               </div>
             )}
           </div>
+        )}
+
+        <button
+          onClick={toggleTheme}
+          title={`Switch to ${appSettings.theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
+        >
+          {appSettings.theme === 'dark' ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-indigo-500" />
+          )}
+        </button>
+
+        {imageFile && (
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Start Over
+          </button>
         )}
       </div>
 
